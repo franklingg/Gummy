@@ -78,6 +78,10 @@ web_modules/
 .cache
 .parcel-cache
 
+# not good
+src/commands/xingar.js
+src/data/xingamentos.json
+
 # Next.js build output
 .next
 out
@@ -116,3 +120,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
