@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const Discord = require("discord.js");
+const {BotError, NotEnoughArgs} = require('./utils/BotError');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -22,15 +23,22 @@ client.on("message", function (message) {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
-    const command = args.shift().toLowerCase();
-
-    if (!client.commands.has(command)) return;
-
+    const commandName = args.shift().toLowerCase();
+	
+	const command = client.commands.get(commandName) 
+					|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+					
 	try {
-		client.commands.get(command).execute(message, args);
+		if(!command) throw new BotError('Num faço a menor do que tu quer com issor kkk');
+		if(command.args && !args.length) throw new NotEnoughArgs(command.usage);
+		command.execute(message, args);
 	} catch (error) {
 		console.error(error);
-		message.reply('Deu certo aqui não, vey. Tenta de novo!');
+		if(error instanceof BotError){
+			message.reply(error.botMessage);
+		} else {
+			message.reply('Deu certo aqui não, vey. Tenta de outra forma!');
+		}
 	}
 
 });
