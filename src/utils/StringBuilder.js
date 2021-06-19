@@ -1,3 +1,4 @@
+const emojis = require("../data/emojiCharacters");
 
 const createPhrase = (array) => {
     if(array.length === 0) return "";
@@ -15,15 +16,14 @@ const createPhrase = (array) => {
         }
     }
     return phrase;
-
-    // return array.reduce((phrase="", word, index)=>{
-    //     if(index === array.length - 1) return ` ${phrase}${word}`;
-    //     if(index === array.length - 2) return `${phrase}${word} e `;
-    //     return `${phrase} ${word}, `;
-    // });
 };
+
+const buildOptionsParagraph = (args) => {
+    return args.map((opt, idx) => `\n${emojis[idx+1]} ${opt}\n`).join('');
+}
 
 
 module.exports = {
-    createPhrase
+    createPhrase,
+    buildOptionsParagraph
 }
