@@ -80,7 +80,7 @@ web_modules/
 
 # not good
 src/commands/xingar.js
-src/data/xingamentos.json
+src/data/xingamentos.js
 
 # Next.js build output
 .next
