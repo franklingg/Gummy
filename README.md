@@ -1,7 +1,7 @@
 # Gummy
 Discord.js bot using Node
 
-## Setup
+### Setup
 
 
 ### Current Features
