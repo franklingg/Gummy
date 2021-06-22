@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
-const emojis = require("../data/emojiCharacters");
-const {buildOptionsParagraph} = require('../utils/StringBuilder');
-const {uniqueReaction, roleOnReaction} = require('../utils/Messages');
+const emojis = require("../../data/emojiCharacters");
+const {buildOptionsParagraph} = require('../../utils/StringBuilder');
+const {uniqueReaction, roleOnReaction} = require('../../utils/Messages');
 
 // hours
 const EXPIRE_TIME = 12;

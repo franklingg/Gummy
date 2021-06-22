@@ -33,7 +33,20 @@ const roleOnReaction = (message, role) => {
     });
 };
 
+const percentBar = (percent) => {
+    // if undefined, choose randomly
+    if(!percent && percent !== 0){
+        percent = Math.floor(Math.random() * 101);
+    }
+    let bar = new Array(10).fill('. ');
+    for(let i=0; i < Math.floor(percent / 10); i++){
+        bar[i] = '█'; 
+    }
+    return `**${percent}% [${bar.join('')}]**`
+}
+
 module.exports= {
     uniqueReaction,
-    roleOnReaction
+    roleOnReaction,
+    percentBar
 }

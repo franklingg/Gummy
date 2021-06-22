@@ -7,11 +7,14 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const prefix = process.env.prefix;
 
-const commandFiles = fs.readdirSync('src/commands').filter(file => file.endsWith('.js'));
+const commandFolders = fs.readdirSync('src/commands');
 
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
+for (const folder of commandFolders) {
+	const commandFiles = fs.readdirSync(`src/commands/${folder}`).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const command = require(`./commands/${folder}/${file}`);
+		client.commands.set(command.name, command);
+	}
 }
 
 client.on("ready", ()=>{
@@ -22,7 +25,7 @@ client.on("ready", ()=>{
 client.on("message", function (message) {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const args = message.content.slice(prefix.length).trim().split(/\s+/);
     const commandName = args.shift().toLowerCase();
 	
 	const command = client.commands.get(commandName) 

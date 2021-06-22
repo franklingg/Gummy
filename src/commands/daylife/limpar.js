@@ -1,4 +1,4 @@
-const {NotEnoughArgs, InvalidArgs} = require("../utils/BotError");
+const {NotEnoughArgs, InvalidArgs} = require("../../utils/BotError");
 
 const usage = `Como usar: "${process.env.prefix}limpar {nº de mensagens}"`;
 

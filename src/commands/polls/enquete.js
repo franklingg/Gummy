@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const {uniqueReaction} = require('../utils/Messages');
-const emojis = require("../data/emojiCharacters");
-const {buildOptionsParagraph} = require('../utils/StringBuilder');
-const {NotEnoughArgs} = require("../utils/BotError");
+const {uniqueReaction} = require('../../utils/Messages');
+const emojis = require("../../data/emojiCharacters");
+const {buildOptionsParagraph} = require('../../utils/StringBuilder');
+const {NotEnoughArgs} = require("../../utils/BotError");
 
 const usage = `Como usar: "${process.env.prefix}votar {pergunta} | Opção 1 | Opção 2 | ..."`;
 
@@ -13,7 +13,6 @@ module.exports = {
 	usage,
 	execute: (message, args) => {
         if(args.length <= 2) throw new NotEnoughArgs(usage);
-        message.channel.bulkDelete(1);
         const [title, ...options] = args.join(' ').split('|').map(s => s.trim());
 
         const embedMessage = new Discord.MessageEmbed()
