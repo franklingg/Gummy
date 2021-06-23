@@ -74,13 +74,15 @@ web_modules/
 .env.test
 .env.production
 
+# not good
+src/commands/daylife/xingar.js
+src/commands/metrics/boiola.js
+src/data/xingamentos.js
+src/data/img/boiola.jpg
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
-
-# not good
-src/commands/xingar.js
-src/data/xingamentos.js
 
 # Next.js build output
 .next
@@ -121,3 +123,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+deploy/
