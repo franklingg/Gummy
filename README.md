@@ -1,5 +1,5 @@
 # Gummy
-Discord.js bot using Node
+Discord bot using Node with [Discord.js](https://discord.js.org/#/)
 
 ### Current Features
 * Clean any number of messages
