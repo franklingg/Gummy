@@ -9,3 +9,4 @@ Discord bot using Node with [Discord.js](https://discord.js.org/#/)
 ### Environment Setup (.env)
 * BOT_TOKEN: The token get from OAuth2 on [Discord Developer Portal](discord.com/developers/)
 * PREFIX: Single char that every command will start with (like !, >, ?, -, etc)
+* MOVIE_ROLE: A role that your users will get with movie commands.
