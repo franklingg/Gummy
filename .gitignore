@@ -123,4 +123,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-deploy/
+yarn.lock
+package-lock.json
