@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const randomColor = require('randomcolor');
 const { percentBar } = require('../../utils/Messages');
 
 const usage = `Como usar: "${process.env.prefix}cringe {pessoa}"`;
@@ -12,7 +13,7 @@ module.exports = {
         const cringeIMG = new Discord
                       .MessageAttachment('src/data/img/cringe.jpg', 'cringe.jpg');
         const embedMessage = new Discord.MessageEmbed()
-            .setColor('#EB3434')
+            .setColor(randomColor())
             .setTitle('\nQuão cringe será que tu é? kk')
             .setDescription(`\n👇😗\n\n${percentBar()}\n`)
             .attachFiles(cringeIMG)

@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const randomColor = require('randomcolor');
 const {uniqueReaction} = require('../../utils/Messages');
 const {NotEnoughArgs} = require("../../utils/BotError");
 
@@ -13,8 +14,9 @@ module.exports = {
         if(args.length === 0) throw new NotEnoughArgs(usage);
         const title = args.join(' ').trim();
         const embedMessage = new Discord.MessageEmbed()
-            .setColor('#34BDEB')
-            .setAuthor(message.author.username, message.author.displayAvatarURL())
+            .setColor(randomColor())
+            .setAuthor(message.guild.members.cache.get(message.author.id).nickname,
+                       message.author.displayAvatarURL())
             .setTitle(title.endsWith('?') ? title : title + '?')
             .setDescription('\n👍 Sim\n\n👎 Não\n');
         message.channel.send(embedMessage).then(embedded => {

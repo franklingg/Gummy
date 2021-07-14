@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const randomColor = require('randomcolor');
 const {uniqueReaction} = require('../../utils/Messages');
 const emojis = require("../../data/emojiCharacters");
 const {buildOptionsParagraph} = require('../../utils/StringBuilder');
@@ -16,8 +17,9 @@ module.exports = {
         const [title, ...options] = args.join(' ').split('|').map(s => s.trim());
 
         const embedMessage = new Discord.MessageEmbed()
-            .setColor('#F4ADEB')
-            .setAuthor(message.author.username, message.author.displayAvatarURL())
+            .setColor(randomColor())
+            .setAuthor(message.guild.members.cache.get(message.author.id).nickname,
+                       message.author.displayAvatarURL())
             .setTitle(title.endsWith('?') ? title : title + '?')
             .setDescription(buildOptionsParagraph(options));
         message.channel.send(embedMessage).then(embedded => {
