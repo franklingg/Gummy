@@ -3,7 +3,9 @@ const uniqueReaction = (message) => {
     const collector = message.createReactionCollector((r, u) => r, { dispose: true });
     collector.on('collect', (reaction, user)=>{
         if(!user.bot){
-            const userReactions = message.reactions.cache.filter(r => r.users.cache.has(user.id) && r !== reaction);
+            const userReactions = message.reactions.cache
+                .each(async (reaction) => await reaction.users.fetch())
+                .filter(r => r.users.cache.has(user.id) && r !== reaction);
             userReactions.forEach(r => r.users.remove(user.id));
         }
     });
