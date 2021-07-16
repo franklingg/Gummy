@@ -6,7 +6,7 @@ const {uniqueReaction, roleOnReaction} = require('../../utils/Messages');
 const {NotEnoughArgs} = require("../../utils/BotError");
 
 
-const usage = `Como usar: "${process.env.prefix}filme titulo opcao1 / opcao2 / opcao3"`;
+const usage = `Como usar: "${process.env.prefix}filme titulo / opcao1 / opcao2 / opcao3"`;
 module.exports = {
 	name: 'filme',
 	aliases: ['f', 'movie'],
@@ -15,7 +15,7 @@ module.exports = {
 	execute: (message, args) => {
         if(args.length < 1) throw new NotEnoughArgs(usage);
 
-        const [title, ...options] = args;
+        const [title, ...options] = args.join(' ').split('/');
         const movies = options.filter(option => option.trim() !== '/');
         const embedMessage = new Discord.MessageEmbed()
                                 .setColor(randomColor())
