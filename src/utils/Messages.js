@@ -44,7 +44,10 @@ const percentBar = (percent) => {
     for(let i=0; i < Math.floor(percent / 10); i++){
         bar[i] = '█'; 
     }
-    return `**${percent}% [${bar.join('')}]**`
+    return {
+        bar: `**${percent}% [${bar.join('')}]**`,
+        value: percent
+    };
 }
 
 module.exports= {
