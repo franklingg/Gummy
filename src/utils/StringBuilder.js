@@ -1,4 +1,4 @@
-const emojis = require("../data/emojiCharacters");
+const emojis = require("../assets/emojiCharacters");
 
 const createPhrase = (array) => {
     if(array.length === 0) return "";

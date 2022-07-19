@@ -77,9 +77,9 @@ web_modules/
 # not good
 src/commands/daylife/xingar.js
 src/commands/metrics/boiola.js
-src/data/xingamentos.json
-src/data/img/boiola.jpg
-src/data/img/justin.jpg
+src/assets/xingamentos.json
+src/assets/img/boiola.jpg
+src/assets/img/justin.jpg
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

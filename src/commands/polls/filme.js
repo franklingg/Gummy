@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const randomColor = require('randomcolor');
-const emojis = require("../../data/emojiCharacters");
+const emojis = require("../../assets/emojiCharacters");
 const {buildOptionsParagraph} = require('../../utils/StringBuilder');
 const {uniqueReaction, roleOnReaction} = require('../../utils/Messages');
 const {NotEnoughArgs} = require("../../utils/BotError");

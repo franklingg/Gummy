@@ -10,8 +10,8 @@ module.exports = {
 	usage,
 	execute: (message, args) => {
 
-        const imgs = [new Discord.MessageAttachment('src/data/img/cringe.jpg', 'cringe.jpg'),
-                      new Discord.MessageAttachment('src/data/img/derepente.jpg', 'cringe.jpg')]
+        const imgs = [new Discord.MessageAttachment('src/assets/img/cringe.jpg', 'cringe.jpg'),
+                      new Discord.MessageAttachment('src/assets/img/derepente.jpg', 'cringe.jpg')]
 
         const percentage = percentBar();
         const embedMessage = new Discord.MessageEmbed()

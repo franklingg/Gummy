@@ -18,12 +18,11 @@ for (const folder of commandFolders) {
 }
 
 client.on("ready", ()=>{
-    //useful for tests
     console.log("I'm in");
 });
 
 client.on("message", function (message) {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).trim().split(/\s+/);
     const commandName = args.shift().toLowerCase();
