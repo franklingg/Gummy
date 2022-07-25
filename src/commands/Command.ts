@@ -1,15 +1,19 @@
-import {ChatInputCommandInteraction, ApplicationCommand} from 'discord.js';
-import Testar from './testar';
+import {ApplicationCommandOptionData, ChatInputCommandInteraction} from 'discord.js';
+import { Database } from "sqlite";
+import Category from './category';
+import Xingar from './xingar';
 
 export type Command = {
     name: string;
     description: string;
-    execute(interaction: ChatInputCommandInteraction): Promise<void>;
+    options: Array<ApplicationCommandOptionData>,
+    execute(interaction: ChatInputCommandInteraction, db?: Database): Promise<void>;
 }
 
 
 const availableCommands = [
-    Testar
+    Xingar,
+    Category
 ];
 
 export { availableCommands };

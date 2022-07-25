@@ -3,8 +3,12 @@ import { Client, Events, Partials, GatewayIntentBits } from 'discord.js';
 import {BotError, NotEnoughArgs} from './utils/BotError';
 import { availableCommands } from './commands/Command';
 import { logBotError, logBotSuccess } from './utils/Logger';
+import { initDb } from './db/connection';
+import { Database } from 'sqlite';
 
 dotenv.config();
+let db : Database;
+
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds, 
@@ -17,9 +21,11 @@ const client = new Client({
 	partials: [Partials.Channel, Partials.Message, Partials.User, Partials.GuildMember, Partials.Reaction] 
 });
 
-client.once(Events.ClientReady, (c) =>{
+client.once(Events.ClientReady, async (c) =>{
 	console.log("Entrei!");
-	c.application.commands.set(availableCommands.map(c => ({ name: c.name, description: c.description})));
+	c.application.commands.set(availableCommands.map(c => ({ name: c.name, description: c.description, options: c.options})));
+	const db_connection = await initDb();
+	if(db_connection) db = db_connection;
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -27,7 +33,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	
 	try {
 		const command = availableCommands.find(c => c.name == interaction.commandName)
-		await command?.execute(interaction);
+		await command?.execute(interaction, db);
 		logBotSuccess(interaction);
 	} catch (error) {
 		if(error instanceof Error){

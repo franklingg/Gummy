@@ -9,8 +9,10 @@ export function logBotSuccess(interaction : ChatInputCommandInteraction) : void 
     log_file.write(message);
 }
 
-export function logBotError(error: Error, interaction : ChatInputCommandInteraction) : void {
-    const message = `${new Date().toLocaleString('pt-BR')} - ${error.message} - ${interaction.commandName} - ${interaction.user.username}\n`;
+export function logBotError(error: Error, interaction? : ChatInputCommandInteraction) : void {
+    let message = `${new Date().toLocaleString('pt-BR')} - ${error.message}}`
+    if(interaction) message = message.concat(`- ${interaction.commandName} - ${interaction.user.username}\n`);
+    
     console.error(message);
     error_file.write(message);
 }
