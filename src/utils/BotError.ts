@@ -1,6 +1,8 @@
-class BotError extends Error {
+export class BotError extends Error {
 
-    constructor(message){
+    _botMessage: string;
+
+    constructor(message : string){
         super(message);
         this._botMessage = message;
     }
@@ -10,21 +12,14 @@ class BotError extends Error {
     }
 }
 
-class NotEnoughArgs extends BotError {
-    constructor(usage){
+export class NotEnoughArgs extends BotError {
+    constructor(usage : string){
         super(`\nTa faltando ou tem coisa demais ai mo...\n${usage}`);
     }
 }
 
-class InvalidArgs extends BotError {
-    constructor(usage){
+export class InvalidArgs extends BotError {
+    constructor(usage : string){
         super('Tu digitou coisa errada minha véa...\n ' + usage);
     }
-}
-
-
-module.exports = {
-    BotError,
-    NotEnoughArgs,
-    InvalidArgs
 }

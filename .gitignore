@@ -74,12 +74,6 @@ web_modules/
 .env.test
 .env.production
 
-# not good
-src/commands/daylife/xingar.js
-src/commands/metrics/boiola.js
-src/assets/xingamentos.json
-src/assets/img/boiola.jpg
-src/assets/img/justin.jpg
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
