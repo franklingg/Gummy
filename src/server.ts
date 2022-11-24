@@ -1,13 +1,10 @@
 import dotenv from 'dotenv';
 import { Client, Events, Partials, GatewayIntentBits } from 'discord.js';
 import {BotError, NotEnoughArgs} from './utils/BotError';
-import { availableCommands } from './commands/Command';
+import { availableCommands } from './commands';
 import { logBotError, logBotSuccess } from './utils/Logger';
-import { initDb } from './db/connection';
-import { Database } from 'sqlite';
 
 dotenv.config();
-let db : Database;
 
 const client = new Client({
 	intents: [
@@ -22,10 +19,8 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, async (c) =>{
+	c.application.commands.set(availableCommands);
 	console.log("Entrei!");
-	c.application.commands.set(availableCommands.map(c => ({ name: c.name, description: c.description, options: c.options})));
-	const db_connection = await initDb();
-	if(db_connection) db = db_connection;
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -33,7 +28,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	
 	try {
 		const command = availableCommands.find(c => c.name == interaction.commandName)
-		await command?.execute(interaction, db);
+		await command?.execute(interaction);
 		logBotSuccess(interaction);
 	} catch (error) {
 		if(error instanceof Error){

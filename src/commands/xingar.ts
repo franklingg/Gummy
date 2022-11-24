@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ChatInputCommandInteraction} from 'discord.js';
-import { Command } from '~/commands/Command';
+import { Command } from '~/commands';
 
 const Xingar : Command = {
     name: 'xingar',
