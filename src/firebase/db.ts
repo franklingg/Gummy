@@ -1,19 +1,18 @@
+import admin from 'firebase-admin';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, QueryDocumentSnapshot, FirestoreDataConverter } from 'firebase-admin/firestore';
-import { Award } from './types';
+import { Award, Category } from './types';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY, 
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID,
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+    credential: admin.credential.cert(require('../../firebaseAccount.json'))
 };
 
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
+firestore.settings({ignoreUndefinedProperties: true});
 
 const converter = <T>() => ({
     toFirestore: (data: Partial<T>) => data,
@@ -23,8 +22,8 @@ const converter = <T>() => ({
 const dataPoint = <T>(collectionPath: string) => firestore.collection(collectionPath).withConverter(converter<T>())
   
 const db = {
-    awards: dataPoint<Award>('awards'),
-    // userPosts: (userId: string) => dataPoint<YourOtherType>(`users/${userId}/posts`)
+    awards: dataPoint<Award>('/awards'),
+    categories: (awardId: string) => dataPoint<Category>(`awards/${awardId}/categories`)
 }
 
 export {db};

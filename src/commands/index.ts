@@ -8,7 +8,7 @@ export type Command = {
     options: Array<ApplicationCommandOptionData>;
     dm_permission?: boolean;
     execute(interaction: ChatInputCommandInteraction): Promise<void>;
-};
+} & ApplicationCommandDataResolvable;
 
 const availableCommands = [
     Xingar,

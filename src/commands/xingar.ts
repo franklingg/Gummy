@@ -1,9 +1,10 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction} from 'discord.js';
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionFlagsBits} from 'discord.js';
 import { Command } from '~/commands';
 
 const Xingar : Command = {
     name: 'xingar',
     description: 'Xingue alguém!',
+    defaultMemberPermissions: PermissionFlagsBits.SendMessages,
     options: [
         {
             type: ApplicationCommandOptionType.Mentionable,

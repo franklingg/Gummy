@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
+    "@types/body-parser": "^1.19.2",
     "@types/firebase": "^3.2.1",
     "@types/node": "^18.11.2",
     "eslint": "^8.25.0",

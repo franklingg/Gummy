@@ -54,6 +54,8 @@ web_modules/
 # Optional eslint cache
 .eslintcache
 
+firebaseAccount.json
+
 # Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
