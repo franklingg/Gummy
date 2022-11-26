@@ -10,11 +10,12 @@ type Award = {
 
 type Category = {
     title: string;
+    description: string;
     candidate1: string;
     candidate2: string;
-    candidate3?: string;
-    candidate4?: string;
-    candidate5?: string;
+    candidate3: string | null;
+    candidate4: string | null;
+    candidate5: string | null;
 }
 
 export type { Award, Category }

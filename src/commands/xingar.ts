@@ -5,6 +5,7 @@ const Xingar : Command = {
     name: 'xingar',
     description: 'Xingue alguém!',
     defaultMemberPermissions: PermissionFlagsBits.SendMessages,
+    dm_permission: false,
     options: [
         {
             type: ApplicationCommandOptionType.Mentionable,
