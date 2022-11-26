@@ -18,4 +18,10 @@ type Category = {
     candidate5: string | null;
 }
 
-export type { Award, Category }
+type Vote = {
+    voter: string;
+    category: string;
+    choice: number;
+}
+
+export type { Award, Category, Vote }

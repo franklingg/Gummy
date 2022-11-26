@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, QueryDocumentSnapshot, FirestoreDataConverter } from 'firebase-admin/firestore';
-import { Award, Category } from './types';
+import { Award, Category, Vote } from './types';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -23,7 +23,8 @@ const dataPoint = <T>(collectionPath: string) => firestore.collection(collection
   
 const db = {
     awards: dataPoint<Award>('/awards'),
-    categories: (awardId: string) => dataPoint<Category>(`awards/${awardId}/categories`)
+    categories: (awardId: string) => dataPoint<Category>(`awards/${awardId}/categories`),
+    votes: dataPoint<Vote>('/votes')
 }
 
 export {db};
