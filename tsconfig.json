@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "node",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": "",

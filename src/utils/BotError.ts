@@ -20,6 +20,6 @@ export class NotEnoughArgs extends BotError {
 
 export class InvalidArgs extends BotError {
     constructor(usage : string){
-        super('Tu digitou coisa errada minha véa... ' + usage);
+        super('Tu inseriu coisa errada minha véa... ' + usage);
     }
 }

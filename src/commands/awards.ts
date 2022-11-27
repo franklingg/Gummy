@@ -2,6 +2,17 @@ import { ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionFl
 import { Command } from './';
 import { db } from '../firebase/db';
 import { BotError, InvalidArgs } from '../utils/BotError';
+import { Award } from '~/firebase/types';
+
+const dmMessage = (award?: Award) => `
+    :pleading_face: :sob: :nail_care: :rainbow_flag: :pray: :high_heel: :lips: :lipstick: :heart_eyes: :face_holding_back_tears:
+    **Bem vindo ao ${award?.title}**
+    *${award?.subtitle}*
+
+    Precisamos que você registre seus votos!! 
+    Basta usar o comando \`/votar\` que o Gummy trará todas as categorias que precisam do seu voto.
+    (Pode levar um tempinho para aparecer todas as categorias, já que algumas possuem áudio/vídeo).
+`
 
 const Awards: Command = {
     name: 'awards',
@@ -11,7 +22,7 @@ const Awards: Command = {
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,
-            name: 'iniciar',
+            name: 'cadastrar',
             description: 'Cadastre um novo Awards/Premiação',
             options: [
                 {
@@ -27,14 +38,15 @@ const Awards: Command = {
                     description: "Subtítulo ou chamada para o evento"
                 },
                 {
+                    type: ApplicationCommandOptionType.Role,
+                    name: "role",
+                    description: "Role associada à premiação",
+                    required: true
+                },
+                {
                     type: ApplicationCommandOptionType.Attachment,
                     name: "banner",
                     description: "Banner ou imagem para a premiação"
-                },
-                {
-                    type: ApplicationCommandOptionType.Role,
-                    name: "role",
-                    description: "Role associada à premiação"
                 }
             ]
         },
@@ -129,13 +141,18 @@ const Awards: Command = {
                     description: "Candidato 5"
                 }
             ]
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: 'disparar',
+            description: 'Dispara votação na DM entre todos os cadastrados em um awards'
         }
     ],
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const subcommand = interaction.options.getSubcommand();
 
-        if (subcommand === 'iniciar') {
+        if (subcommand === 'cadastrar') {
             const title = interaction.options.getString('titulo', true);
             const subtitle = interaction.options.getString('subtitulo', true);
             const banner = interaction.options.getAttachment('banner');
@@ -166,6 +183,7 @@ const Awards: Command = {
                 candidate3: cdt3, 
                 candidate4: cdt4, 
                 candidate5: cdt5, 
+                isMultimedia: false
             });
             interaction.reply("Categoria criada!!");
         } else if(subcommand === 'categoria_multimidia') {
@@ -177,6 +195,9 @@ const Awards: Command = {
                 const cdt3 = interaction.options.getAttachment('candidato3');
                 const cdt4 = interaction.options.getAttachment('candidato4');
                 const cdt5 = interaction.options.getAttachment('candidato5');
+                if([cdt1, cdt2, cdt3, cdt4, cdt5].some(cdt => cdt && !/(audio|image|video)\/.*/.test(cdt.contentType || ""))){
+                    throw new InvalidArgs("\nFormato do arquivo inválido. \nSão permitidas apenas arquivos de imagem, áudio ou vídeo");
+                }
                 const nextDoc = (await db.categories('1').count().get()).data().count + 1;
     
                 await db.categories('1').doc(`${nextDoc}`).set({ 
@@ -186,10 +207,19 @@ const Awards: Command = {
                     candidate2: cdt2.url, 
                     candidate3: cdt3?.url || null, 
                     candidate4: cdt4?.url || null, 
-                    candidate5: cdt5?.url || null, 
+                    candidate5: cdt5?.url || null,
+                    isMultimedia: true
                 });
                 interaction.reply("Categoria criada!!");
-        } else {
+            } else if(subcommand === 'disparar') {
+                const awards = (await db.awards.doc('1').get()).data();
+                const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || ""))?.members;
+
+                membersToSend?.each(member => {
+                    member.createDM(true).then(channel => channel.send(dmMessage(awards)))
+                });
+                interaction.reply("Enviado a todes es convidades")
+            } else {
             throw new BotError("Não dá pra fazer isso com um award, mô!");
         }
     }

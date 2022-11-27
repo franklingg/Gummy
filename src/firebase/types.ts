@@ -16,6 +16,7 @@ type Category = {
     candidate3: string | null;
     candidate4: string | null;
     candidate5: string | null;
+    isMultimedia: boolean;
 }
 
 type Vote = {
