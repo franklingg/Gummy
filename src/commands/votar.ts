@@ -69,6 +69,7 @@ const Votar: Command = {
                         choice: numberChosen
                     });
                 });
+                return Promise.resolve();
             });
             await Promise.all(categoryRace);
         }

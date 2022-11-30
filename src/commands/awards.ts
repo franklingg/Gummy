@@ -5,13 +5,14 @@ import { BotError, InvalidArgs } from '../utils/BotError';
 import { Award } from '~/firebase/types';
 
 const dmMessage = (award?: Award) => `
-    :pleading_face: :sob: :nail_care: :rainbow_flag: :pray: :high_heel: :lips: :lipstick: :heart_eyes: :face_holding_back_tears:
-    **Bem vindo ao ${award?.title}**
-    *${award?.subtitle}*
+:gem: :sparkles: :speaking_head: :partying_face: :dog: :sweat_drops: :eggplant: :peach: :pleading_face: :sob: :nail_care: :rainbow_flag: :pray: :high_heel: :lips: :lipstick: :heart_eyes: :face_holding_back_tears::woman_tipping_hand: :hand_with_index_finger_and_thumb_crossed: :biting_lip: :scream: :new_moon_with_face: :baby_bottle: :dollar: :closed_lock_with_key: :cross:
+**${award?.title}**
+*${award?.subtitle}*
 
-    Precisamos que você registre seus votos!! 
-    Basta usar o comando \`/votar\` que o Gummy trará todas as categorias que precisam do seu voto.
-    (Pode levar um tempinho para aparecer todas as categorias, já que algumas possuem áudio/vídeo).
+Precisamos que você registre seus votos!! 
+Basta digitar o comando \`/votar\` (aqui mesmo) que o Gummy trará todas as categorias que precisam do seu voto.
+(Pode levar um tempinho para aparecer todas as categorias, já que algumas possuem áudio/vídeo).
+Atenção, uma vez que você reaja na mensagem, o voto é registrado, desmarcar/mudar a reação não o registrará novamente.
 `
 
 const Awards: Command = {
@@ -216,9 +217,9 @@ const Awards: Command = {
                 const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || ""))?.members;
 
                 membersToSend?.each(member => {
-                    member.createDM(true).then(channel => channel.send(dmMessage(awards)))
+                    member.createDM(true).then(channel => channel.send({content: dmMessage(awards), files: awards?.banner ? [{attachment: awards.banner!, name: "banner.jpg"}] : []}));
                 });
-                interaction.reply("Enviado a todes es convidades")
+                interaction.reply("Enviado a todes es convidades");
             } else {
             throw new BotError("Não dá pra fazer isso com um award, mô!");
         }
