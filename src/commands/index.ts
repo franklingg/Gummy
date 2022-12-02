@@ -1,5 +1,6 @@
 import {ApplicationCommandDataResolvable, ApplicationCommandOptionData, ChatInputCommandInteraction} from 'discord.js';
 import Awards from './awards';
+import Estatisticas from './estatisticas';
 import Votar from './votar';
 import Xingar from './xingar';
 
@@ -14,7 +15,8 @@ export type Command = {
 const availableCommands = [
     Xingar,
     Awards,
-    Votar
+    Votar,
+    Estatisticas
 ];
 
 export { availableCommands };

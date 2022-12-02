@@ -146,7 +146,7 @@ const Awards: Command = {
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: 'disparar',
-            description: 'Dispara votação na DM entre todos os cadastrados em um awards'
+            description: 'Dispara votação na DM entre todos os cadastrados em um awards.'
         }
     ],
 
@@ -166,7 +166,7 @@ const Awards: Command = {
             interaction.reply("Premiação criada!!");
 
         } else if (subcommand === 'categoria') {
-            if((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
+            if ((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
             const title = interaction.options.getString('titulo', true);
             const description = interaction.options.getString('descricao', true);
             const cdt1 = interaction.options.getString('candidato1', true);
@@ -176,51 +176,51 @@ const Awards: Command = {
             const cdt5 = interaction.options.getString('candidato5');
             const nextDoc = (await db.categories('1').count().get()).data().count + 1;
 
-            await db.categories('1').doc(`${nextDoc}`).set({ 
+            await db.categories('1').doc(`${nextDoc}`).set({
                 title,
                 description,
-                candidate1: cdt1, 
-                candidate2: cdt2, 
-                candidate3: cdt3, 
-                candidate4: cdt4, 
-                candidate5: cdt5, 
+                candidate1: cdt1,
+                candidate2: cdt2,
+                candidate3: cdt3,
+                candidate4: cdt4,
+                candidate5: cdt5,
                 isMultimedia: false
             });
             interaction.reply("Categoria criada!!");
-        } else if(subcommand === 'categoria_multimidia') {
-                if((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
-                const title = interaction.options.getString('titulo', true);
-                const description = interaction.options.getString('descricao', true);
-                const cdt1 = interaction.options.getAttachment('candidato1', true);
-                const cdt2 = interaction.options.getAttachment('candidato2', true);
-                const cdt3 = interaction.options.getAttachment('candidato3');
-                const cdt4 = interaction.options.getAttachment('candidato4');
-                const cdt5 = interaction.options.getAttachment('candidato5');
-                if([cdt1, cdt2, cdt3, cdt4, cdt5].some(cdt => cdt && !/(audio|image|video)\/.*/.test(cdt.contentType || ""))){
-                    throw new InvalidArgs("\nFormato do arquivo inválido. \nSão permitidas apenas arquivos de imagem, áudio ou vídeo");
-                }
-                const nextDoc = (await db.categories('1').count().get()).data().count + 1;
-    
-                await db.categories('1').doc(`${nextDoc}`).set({ 
-                    title,
-                    description,
-                    candidate1: cdt1.url, 
-                    candidate2: cdt2.url, 
-                    candidate3: cdt3?.url || null, 
-                    candidate4: cdt4?.url || null, 
-                    candidate5: cdt5?.url || null,
-                    isMultimedia: true
-                });
-                interaction.reply("Categoria criada!!");
-            } else if(subcommand === 'disparar') {
-                const awards = (await db.awards.doc('1').get()).data();
-                const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || ""))?.members;
+        } else if (subcommand === 'categoria_multimidia') {
+            if ((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
+            const title = interaction.options.getString('titulo', true);
+            const description = interaction.options.getString('descricao', true);
+            const cdt1 = interaction.options.getAttachment('candidato1', true);
+            const cdt2 = interaction.options.getAttachment('candidato2', true);
+            const cdt3 = interaction.options.getAttachment('candidato3');
+            const cdt4 = interaction.options.getAttachment('candidato4');
+            const cdt5 = interaction.options.getAttachment('candidato5');
+            if ([cdt1, cdt2, cdt3, cdt4, cdt5].some(cdt => cdt && !/(audio|image|video)\/.*/.test(cdt.contentType || ""))) {
+                throw new InvalidArgs("\nFormato do arquivo inválido. \nSão permitidas apenas arquivos de imagem, áudio ou vídeo");
+            }
+            const nextDoc = (await db.categories('1').count().get()).data().count + 1;
 
-                membersToSend?.each(member => {
-                    member.createDM(true).then(channel => channel.send({content: dmMessage(awards), files: awards?.banner ? [{attachment: awards.banner!, name: "banner.jpg"}] : []}));
-                });
-                interaction.reply("Enviado a todes es convidades");
-            } else {
+            await db.categories('1').doc(`${nextDoc}`).set({
+                title,
+                description,
+                candidate1: cdt1.url,
+                candidate2: cdt2.url,
+                candidate3: cdt3?.url || null,
+                candidate4: cdt4?.url || null,
+                candidate5: cdt5?.url || null,
+                isMultimedia: true
+            });
+            interaction.reply("Categoria criada!!");
+        } else if (subcommand === 'disparar') {
+            const awards = (await db.awards.doc('1').get()).data();
+            const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || ""))?.members;
+
+            membersToSend?.each(member => {
+                member.createDM(true).then(channel => channel.send({ content: dmMessage(awards), files: awards?.banner ? [{ attachment: awards.banner!, name: "banner.jpg" }] : [] }));
+            });
+            interaction.reply("Enviado a todes es convidades");
+        } else {
             throw new BotError("Não dá pra fazer isso com um award, mô!");
         }
     }
