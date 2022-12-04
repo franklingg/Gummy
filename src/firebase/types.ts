@@ -13,10 +13,11 @@ type Category = {
     description: string;
     candidate1: string;
     candidate2: string;
-    candidate3: string | null;
-    candidate4: string | null;
-    candidate5: string | null;
+    candidate3?: string;
+    candidate4?: string;
+    candidate5?: string;
     isMultimedia: boolean;
+    isBanner: boolean;
 }
 
 type Vote = {

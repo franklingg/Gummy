@@ -40,7 +40,12 @@ const Votar: Command = {
             const categoryRace = categories.map(cat => cat.data()).map(async category => {
                 const num_candidates = [category.candidate3, category.candidate4, category.candidate5].filter(Boolean).length + 2;
                 let msg : Message | undefined;
-                if(category.isMultimedia){
+                if (category.isBanner) {
+                    msg = await interaction.channel?.send({
+                        content: `**${capitalize(category.title)}**\n`,
+                        files: [category.description]
+                    });
+                } else if (category.isMultimedia){
                     for(let i=0; i < num_candidates; i++){
                         const content = (i == 0 ? `**${capitalize(category.title)}**\n\t*${capitalize(category.description)}*\n` : "") +  `-${numberEmojis[i]}`;
                         const sentMsg = await interaction.channel?.send({

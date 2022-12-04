@@ -54,6 +54,25 @@ const Awards: Command = {
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: 'categoria',
+            description: 'Adiciona uma nova categoria com banner a um Awards/Premiação',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: "titulo",
+                    description: "Título da categoria",
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.Attachment,
+                    name: "banner",
+                    description: "Banner da categoria",
+                    required: true
+                }
+            ]
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: 'categoria_texto',
             description: 'Adiciona uma nova categoria a um Awards/Premiação',
             options: [
                 {
@@ -168,12 +187,31 @@ const Awards: Command = {
         } else if (subcommand === 'categoria') {
             if ((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
             const title = interaction.options.getString('titulo', true);
+            const banner = interaction.options.getAttachment('banner', true);
+
+            const nextDoc = (await db.categories('1').count().get()).data().count + 1;
+
+            await db.categories('1').doc(`${nextDoc}`).set({
+                title,
+                description: banner.url,
+                candidate1: 'Opção 1',
+                candidate2: 'Opção 2',
+                candidate3: 'Opção 3',
+                candidate4: 'Opção 4',
+                candidate5: 'Opção 5',
+                isMultimedia: false,
+                isBanner: true
+            });
+            interaction.reply("Categoria criada!!");
+        } else if (subcommand === 'categoria_texto') {
+            if ((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
+            const title = interaction.options.getString('titulo', true);
             const description = interaction.options.getString('descricao', true);
             const cdt1 = interaction.options.getString('candidato1', true);
             const cdt2 = interaction.options.getString('candidato2', true);
-            const cdt3 = interaction.options.getString('candidato3');
-            const cdt4 = interaction.options.getString('candidato4');
-            const cdt5 = interaction.options.getString('candidato5');
+            const cdt3 = interaction.options.getString('candidato3') || undefined;
+            const cdt4 = interaction.options.getString('candidato4') || undefined;
+            const cdt5 = interaction.options.getString('candidato5') || undefined;
             const nextDoc = (await db.categories('1').count().get()).data().count + 1;
 
             await db.categories('1').doc(`${nextDoc}`).set({
@@ -184,7 +222,8 @@ const Awards: Command = {
                 candidate3: cdt3,
                 candidate4: cdt4,
                 candidate5: cdt5,
-                isMultimedia: false
+                isMultimedia: false,
+                isBanner: false
             });
             interaction.reply("Categoria criada!!");
         } else if (subcommand === 'categoria_multimidia') {
@@ -193,9 +232,9 @@ const Awards: Command = {
             const description = interaction.options.getString('descricao', true);
             const cdt1 = interaction.options.getAttachment('candidato1', true);
             const cdt2 = interaction.options.getAttachment('candidato2', true);
-            const cdt3 = interaction.options.getAttachment('candidato3');
-            const cdt4 = interaction.options.getAttachment('candidato4');
-            const cdt5 = interaction.options.getAttachment('candidato5');
+            const cdt3 = interaction.options.getAttachment('candidato3') || undefined;
+            const cdt4 = interaction.options.getAttachment('candidato4') || undefined;
+            const cdt5 = interaction.options.getAttachment('candidato5') || undefined;
             if ([cdt1, cdt2, cdt3, cdt4, cdt5].some(cdt => cdt && !/(audio|image|video)\/.*/.test(cdt.contentType || ""))) {
                 throw new InvalidArgs("\nFormato do arquivo inválido. \nSão permitidas apenas arquivos de imagem, áudio ou vídeo");
             }
@@ -206,15 +245,16 @@ const Awards: Command = {
                 description,
                 candidate1: cdt1.url,
                 candidate2: cdt2.url,
-                candidate3: cdt3?.url || null,
-                candidate4: cdt4?.url || null,
-                candidate5: cdt5?.url || null,
-                isMultimedia: true
+                candidate3: cdt3?.url,
+                candidate4: cdt4?.url,
+                candidate5: cdt5?.url,
+                isMultimedia: true,
+                isBanner: false
             });
             interaction.reply("Categoria criada!!");
         } else if (subcommand === 'disparar') {
             const awards = (await db.awards.doc('1').get()).data();
-            const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || ""))?.members;
+            const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || "", {force: true}))?.members;
 
             membersToSend?.each(member => {
                 member.createDM(true).then(channel => channel.send({ content: dmMessage(awards), files: awards?.banner ? [{ attachment: awards.banner!, name: "banner.jpg" }] : [] }));
