@@ -37,7 +37,8 @@ const Votar: Command = {
         if (!categories.length) interaction.reply("Todos os seus votos já foram computados.\nAgora só aguardar o dia da premiação!");
         else {
             interaction.reply("Seguem as categorias que precisam do seu voto!");
-            const categoryRace = categories.map(cat => cat.data()).map(async category => {
+            const categoriesOrdered = categories.map(cat => cat.data()).sort((a, b) => { return a.isBanner ? -1 : !a.isMultimedia ? 0 : 1 }); 
+            for(const category of categoriesOrdered) {
                 const num_candidates = [category.candidate3, category.candidate4, category.candidate5].filter(Boolean).length + 2;
                 let msg : Message | undefined;
                 if (category.isBanner) {
@@ -74,9 +75,7 @@ const Votar: Command = {
                         choice: numberChosen
                     });
                 });
-                return Promise.resolve();
-            });
-            await Promise.all(categoryRace);
+            }
         }
     }
 }
