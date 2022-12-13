@@ -31,13 +31,16 @@ const Votar: Command = {
         const votedCategories = computedVotes.flatMap(doc => doc.data().category);
 
         let categories : QueryDocumentSnapshot<Category>[];
-        if (votedCategories.length) categories = (await db.categories('1').where('title', 'not-in', votedCategories).get()).docs;
+        if (votedCategories.length) {
+            categories = (await db.categories('1').get()).docs;
+            categories = categories.filter(cat => !votedCategories.includes(cat.data().title));
+        }
         else categories = (await db.categories('1').get()).docs;
 
         if (!categories.length) interaction.reply("Todos os seus votos já foram computados.\nAgora só aguardar o dia da premiação!");
         else {
             interaction.reply("Seguem as categorias que precisam do seu voto!");
-            const categoriesOrdered = categories.map(cat => cat.data()).sort((a, b) => { return a.isBanner ? -1 : !a.isMultimedia ? 0 : 1 }); 
+            const categoriesOrdered = categories.map(cat => cat.data()).sort((a, b) => { return a.isBanner ? 0 : !a.isMultimedia ? -1 : 1 }); 
             for(const category of categoriesOrdered) {
                 const num_candidates = [category.candidate3, category.candidate4, category.candidate5].filter(Boolean).length + 2;
                 let msg : Message | undefined;
@@ -76,6 +79,7 @@ const Votar: Command = {
                     });
                 });
             }
+            interaction.channel?.send("Já pode votar gata, barbariza ai :nail_care:")
         }
     }
 }

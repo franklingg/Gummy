@@ -1,8 +1,26 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionFlagsBits, User } from 'discord.js';
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, Message, PermissionFlagsBits, User } from 'discord.js';
 import { Command } from './';
 import { db } from '../firebase/db';
 import { BotError, InvalidArgs } from '../utils/BotError';
-import { Award } from '~/firebase/types';
+import { Award, Category } from '~/firebase/types';
+import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
+import { capitalize } from '../utils/Logger';
+
+const numberEmojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
+
+function formatVotingCategory(category: Category): string {
+    let message = `
+**${capitalize(category.title)}**
+*${capitalize(category.description)}*
+    \t${numberEmojis[0]} ${category.candidate1}
+    \t${numberEmojis[1]} ${category.candidate2}`;
+
+    if (category.candidate3) message = `${message}\n\t\t${numberEmojis[2]} ${category.candidate3}`;
+    if (category.candidate4) message = `${message}\n\t\t${numberEmojis[3]} ${category.candidate4}`;
+    if (category.candidate5) message = `${message}\n\t\t${numberEmojis[4]} ${category.candidate5}`;
+
+    return message;
+}
 
 const dmMessage = (award?: Award) => `
 :gem: :sparkles: :speaking_head: :partying_face: :dog: :sweat_drops: :eggplant: :peach: :pleading_face: :sob: :nail_care: :rainbow_flag: :pray: :high_heel: :lips: :lipstick: :heart_eyes: :face_holding_back_tears::woman_tipping_hand: :hand_with_index_finger_and_thumb_crossed: :biting_lip: :scream: :new_moon_with_face: :baby_bottle: :dollar: :closed_lock_with_key: :cross:
@@ -12,7 +30,6 @@ const dmMessage = (award?: Award) => `
 Precisamos que você registre seus votos!! 
 Basta digitar o comando \`/votar\` (aqui mesmo) que o Gummy trará todas as categorias que precisam do seu voto.
 (Pode levar um tempinho para aparecer todas as categorias, já que algumas possuem áudio/vídeo).
-Atenção, uma vez que você reaja na mensagem, o voto é registrado, desmarcar/mudar a reação não o registrará novamente.
 `
 
 const Awards: Command = {
@@ -67,6 +84,14 @@ const Awards: Command = {
                     name: "banner",
                     description: "Banner da categoria",
                     required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.Integer,
+                    name: "limite",
+                    description: "Limite de candidatos na categoria",
+                    required: true,
+                    max_value: 5,
+                    min_value: 2
                 }
             ]
         },
@@ -188,19 +213,18 @@ const Awards: Command = {
             if ((await db.awards.count().get()).data().count == 0) throw new BotError('Não tem como cadastrar categorias sem premiações, vey...');
             const title = interaction.options.getString('titulo', true);
             const banner = interaction.options.getAttachment('banner', true);
+            const limit = interaction.options.getInteger('limite', true);
 
             const nextDoc = (await db.categories('1').count().get()).data().count + 1;
+
+            const candidates = Array.from(Array(limit)).reduce((result, _, idx) => ({ ...result, [`candidate${idx + 1}`]: `Opção ${idx + 1}` }), {});
 
             await db.categories('1').doc(`${nextDoc}`).set({
                 title,
                 description: banner.url,
-                candidate1: 'Opção 1',
-                candidate2: 'Opção 2',
-                candidate3: 'Opção 3',
-                candidate4: 'Opção 4',
-                candidate5: 'Opção 5',
                 isMultimedia: false,
-                isBanner: true
+                isBanner: true,
+                ...candidates
             });
             interaction.reply("Categoria criada!!");
         } else if (subcommand === 'categoria_texto') {
@@ -254,10 +278,10 @@ const Awards: Command = {
             interaction.reply("Categoria criada!!");
         } else if (subcommand === 'disparar') {
             const awards = (await db.awards.doc('1').get()).data();
-            const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || "", {force: true}))?.members;
+            const membersToSend = (await interaction.guild?.roles.fetch(awards?.role || "", { force: true }))?.members;
 
             membersToSend?.each(member => {
-                member.createDM(true).then(channel => channel.send({ content: dmMessage(awards), files: awards?.banner ? [{ attachment: awards.banner!, name: "banner.jpg" }] : [] }));
+                member.createDM().then(channel => channel.send({ content: dmMessage(awards), files: awards?.banner ? [{ attachment: awards.banner!, name: "banner.jpg" }] : [] })).catch(e => console.error(e));
             });
             interaction.reply("Enviado a todes es convidades");
         } else {
