@@ -6,15 +6,6 @@ import { db } from '../firebase/db';
 
 const numberEmojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
 
-function findWinner(votes: Vote[]): number[] {
-    const results = [0,0,0,0,0];
-    votes.forEach(vote => {
-        results[vote.choice-1]++;
-    });
-    const winners = results.reduce<number[]>((w,el,i) => (el === Math.max(...results) ? [...w, i] : w),[]);
-    return winners;
-}
-
 const Estatisticas: Command = {
     name: 'estatisticas',
     description: 'Informações sobre premiações',
@@ -43,26 +34,52 @@ const Estatisticas: Command = {
             else {
                 const categories = (await db.categories('1').get()).docs.map(c => c.data());
                 await interaction.channel?.send(`*Resultados Prévios*\n__${award.title}__`);
-                categories.forEach(async category => {
+                for(const category of categories) {
                     const votesCategory = computedVotes.filter(vote => vote.category === category.title);
-                    let resultMessage = `>>\n**${category.title}**\n*${category.description}*\n`;
+                    let resultMessage = `>>\n**${category.title}**\n`;
                     
-                    const winners = findWinner(votesCategory);
+                    const results = {};
+                    [category.candidate1, category.candidate2, category.candidate3, category.candidate4, category.candidate5].forEach((cat, idx) =>{
+                        if(cat) {
+                            if(category.isBanner || category.isMultimedia) results[idx+1] = 0;
+                            else results[cat] = 0;
+                        }
+                    })
+                    votesCategory.forEach(vote => {
+                        results[vote.choice]++;
+                    });
+                    const resultsOrdered = Object.entries<number>(results);
+                    resultsOrdered.sort((a, b) => (b[1] - a[1]));
+                    
                     if(category.isMultimedia) {
-                        resultMessage += `Vencedor${winners.length !== 1 ? "es" : ''}:`;
+                        resultMessage += `*${category.description}*\n`;
+                        resultsOrdered.forEach((result, idx) => {
+                            resultMessage += `${numberEmojis[idx]} Opção ${result[0]} - ${result[1]} votos (${(100 * result[1]/votesCategory.length).toFixed(0)}%)\n`
+                        })
                         await interaction.channel?.send({
                             content: resultMessage, 
-                            files: winners.map(w => ({
-                                attachment: category[`candidate${w+1}`],
-                                name: `SPOILER_cat.jpg`
-                            }))
+                            files: resultsOrdered.map(w => {
+                                const file = category[`candidate${w[0]}`];
+                                return {
+                                    attachment: file,
+                                    // get extension from attachment
+                                    name: `SPOILER_cat.${file.substring(file.length - 3)}`
+                                }
+                            })
                         });
                     } else {
-                        if(winners.length === 1) resultMessage += `Vencedor: ||${category[`candidate${winners[0]+1}`]}||`;
-                        else resultMessage += `Vencedores: || ${winners.reduce((a, w) => (a + '\t' + w), "")} ||`;
-                        await interaction.channel?.send(resultMessage);
+                        resultsOrdered.forEach((result, idx) => {
+                            resultMessage += `${numberEmojis[idx]} ${result[0]} - ${result[1]} votos (${(100 * result[1]/votesCategory.length).toFixed(0)}%)\n`
+                        })
+                        await interaction.channel?.send({
+                            content: resultMessage, 
+                            files: [{
+                                attachment: category.description,
+                                name: `SPOILER_cat.jpg`
+                            }]
+                        });
                     }
-                });
+                };
             }
         } else if (subcommand === 'votantes') {
             const computedVotes = (await db.votes.get()).docs.map(v => v.data());
